@@ -9,14 +9,20 @@ import { Command, CommandInput } from "@/components/ui/command";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import React, { useState } from "react";
 
-function SearchDialog() {
+// Define prop interface for SearchDialog
+interface SearchDialogProps {
+  onCitySelect: (city: string) => void;
+}
+
+function SearchDialog({ onCitySelect }: SearchDialogProps) {
   const { geoCodedList, inputValue, handleInput } = useGlobalContext();
   const { setActiveCityCoords } = useGlobalContextUpdate();
   const [open, setOpen] = useState(false); // State to control dialog
   const [hoveredIndex, setHoveredIndex] = React.useState<number>(0);
 
-  const getClickedCoords = (lat: number, lon: number) => {
+  const getClickedCoords = (lat: number, lon: number, cityName: string) => {
     setActiveCityCoords([lat, lon]);
+    onCitySelect(cityName); // Call the onCitySelect callback with the city name
     setOpen(false); // Close the dialog after selecting a city
   };
 
@@ -69,7 +75,7 @@ function SearchDialog() {
                         ${hoveredIndex === index ? "bg-accent" : ""}
                       `}
                         onClick={() => {
-                          getClickedCoords(item.lat, item.lon);
+                          getClickedCoords(item.lat, item.lon, name);
                         }}
                       >
                         <p className="text">
